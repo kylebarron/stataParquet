@@ -34,4 +34,10 @@ public class ParquetReader {
 
     } // End of Method declaration
 
-} // End of Class declaration
+    public static int sayhello(String[] args)
+    {
+        SFIToolkit.displayln("Hello from java!") ;
+        return(0) ;      // Stata return code
+    }
+
+} // End of Class declarationpublic class ParquetReader
