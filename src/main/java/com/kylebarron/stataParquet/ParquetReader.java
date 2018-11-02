@@ -26,13 +26,9 @@ public class ParquetReader {
      */
     public static int methodUsedByJavacallCommand(String[] args) {
 
-        // Use this method to call class constructors and/or methods
-
-
-        // Returns a value of 0 on success
         return 0;
 
-    } // End of Method declaration
+    }
 
     public static int sayhello(String[] args)
     {
@@ -40,4 +36,60 @@ public class ParquetReader {
         return(0) ;      // Stata return code
     }
 
-} // End of Class declarationpublic class ParquetReader
+}
+//
+// public class Main {
+//
+//     private static Path path = new Path("file:\\C:\\Users\\file.snappy.parquet");
+//
+//     private static void printGroup(Group g) {
+//         int fieldCount = g.getType().getFieldCount();
+//         for (int field = 0; field < fieldCount; field++) {
+//             int valueCount = g.getFieldRepetitionCount(field);
+//
+//             Type fieldType = g.getType().getType(field);
+//             String fieldName = fieldType.getName();
+//
+//             for (int index = 0; index < valueCount; index++) {
+//                 if (fieldType.isPrimitive()) {
+//                     System.out.println(fieldName + " " + g.getValueToString(field, index));
+//                 }
+//             }
+//         }
+//
+//     }
+//
+//     public static void main(String[] args) throws IllegalArgumentException {
+//
+//         Configuration conf = new Configuration();
+//
+//         try {
+//             ParquetMetadata readFooter = ParquetFileReader.readFooter(conf, path, ParquetMetadataConverter.NO_FILTER);
+//             MessageType schema = readFooter.getFileMetaData().getSchema();
+//             ParquetFileReader r = new ParquetFileReader(conf, path, readFooter);
+//
+//             PageReadStore pages = null;
+//             try {
+//                 while (null != (pages = r.readNextRowGroup())) {
+//                     final long rows = pages.getRowCount();
+//                     System.out.println("Number of rows: " + rows);
+//
+//                     final MessageColumnIO columnIO = new ColumnIOFactory().getColumnIO(schema);
+//                     final RecordReader<Group> recordReader = columnIO.getRecordReader(pages, new GroupRecordConverter(schema));
+//                     for (int i = 0; i < rows; i++) {
+//                         final Group g = recordReader.read();
+//                         printGroup(g);
+//
+//                         // TODO Compare to System.out.println(g);
+//                     }
+//                 }
+//             } finally {
+//                 r.close();
+//             }
+//         } catch (IOException e) {
+//             System.out.println("Error reading parquet file.");
+//             e.printStackTrace();
+//         }
+//
+//     }
+// }
