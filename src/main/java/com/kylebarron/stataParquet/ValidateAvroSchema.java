@@ -10,8 +10,6 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
 import org.apache.avro.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,23 +20,15 @@ import java.util.stream.Collectors;
 import static net.bytebuddy.matcher.ElementMatchers.*;
 
 public final class ValidateAvroSchema {
-  private static final Logger log = LoggerFactory.getLogger(ValidateAvroSchema.class.getSimpleName());
-  private static final String csvDelimiter = ",";
-
   static void validate(final File schemaFile) throws IOException {
-    final Schema arvoSchema = new Schema.Parser().setValidate(true).parse(schemaFile);
-    final List<String> fieldNames = arvoSchema.getFields().stream()
+    final Schema avroSchema = new Schema.Parser().setValidate(true).parse(schemaFile);
+    final List<String> fieldNames = avroSchema.getFields().stream()
             .map(field -> field.name().toUpperCase())
             .collect(Collectors.toList());
-    if (log.isInfoEnabled()) {
-      log.info(String.join(csvDelimiter, fieldNames.toArray(new String[0])));
-    }
   }
 
   public static final class AvroSchemaInterceptor {
-    @SuppressWarnings("unused")
     public static String validateName(String name) {
-      log.debug("intercept validateName() called");
       return name;
     }
   }
