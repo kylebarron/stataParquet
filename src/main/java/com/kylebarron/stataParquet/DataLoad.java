@@ -65,8 +65,8 @@ public class DataLoad {
         SFIToolkit.displayln(record.getSchema().toString());
 
         // First column in parquet file named a
-        SFIToolkit.displayln("coercing a to an int");
-        int value_a = (Integer) record.get('a');
+        SFIToolkit.displayln("coercing a to a long");
+        long value_a = (Long) record.get('a');
         SFIToolkit.displayln("coercing a to a double");
         double double_value_a = (double) value_a;
         SFIToolkit.displayln("storing a in Stata");
@@ -74,8 +74,8 @@ public class DataLoad {
         Data.storeNum(col, i, double_value_a);
 
         // First column in parquet file named b
-        SFIToolkit.displayln("coercing b to an int");
-        int value_b = (Integer) record.get('b');
+        SFIToolkit.displayln("coercing b to a long");
+        long value_b = (Long) record.get('b');
         SFIToolkit.displayln("coercing b to a double");
         double double_value_b = (double) value_b;
         SFIToolkit.displayln("storing b in Stata");
