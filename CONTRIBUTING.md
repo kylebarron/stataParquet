@@ -1,4 +1,6 @@
 
+
+
 In order to install the Stata JAR onto my system, I ran the following, where
 `-Dfile=sfi-api.jar` should be replaced with the path to the `sfi-api.jar` of
 your Stata installation.
@@ -23,3 +25,7 @@ your Stata installation.
 [INFO] Final Memory: 8M/481M
 [INFO] ------------------------------------------------------------------------
 ```
+
+
+Need to use "Shaded" jar for things to work correctly. This is the jar in which hadoop confs have been merged.
+
