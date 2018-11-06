@@ -51,9 +51,9 @@
     <logback.version>1.1.2</logback.version>
     <jackson.mapper.asl.version>1.9.13</jackson.mapper.asl.version>
     <junit.version>4.12</junit.version>
-    <hadoop.common.version>3.1.0</hadoop.common.version>
+    <hadoop.common.version>2.7.0</hadoop.common.version>
     <hadoop.core.version>1.2.1</hadoop.core.version>
-    <parquet.hadoop.version>1.10.0</parquet.hadoop.version>
+    <parquet.hadoop.version>1.9.0</parquet.hadoop.version>
     <avro.version>1.8.2</avro.version>
     <parquet.avro.version>1.10.0</parquet.avro.version>
     <byte_buddy.version>0.7.6</byte_buddy.version>
