@@ -39,6 +39,33 @@ import java.io.PrintWriter;
  */
 public class ParquetStataReader {
 
+  public static int read(String[] args) {
+    try {
+      String filePath = "sample2.parquet";
+      ParquetMetadata metadata = getMetadata(filePath);
+
+      // Set number of observations in data
+      setStataObs(metadata);
+
+      // Add columns
+      Map<String, Type> columns = getColumns(metadata);
+      createColumnsStata(columns);
+
+      // Store data in Stata
+      final Path parquetFilePath = FileSystems.getDefault().getPath(filePath);
+      readFromParquet(parquetFilePath, columns);
+
+      return(0);
+    } catch (Throwable e) {
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      String sStackTrace = sw.toString();
+      SFIToolkit.displayln(sStackTrace);
+      return(1);
+    }
+  }
+
   private static ParquetMetadata getMetadata(String pathString) {
     try {
       org.apache.hadoop.fs.Path path = new org.apache.hadoop.fs.Path(pathString);
@@ -95,37 +122,6 @@ public class ParquetStataReader {
     Data.setObsTotal(num_rows);
   }
 
-  public static int read(String[] args) {
-    try {
-      String filePath = "sample2.parquet";
-      ParquetMetadata metadata = getMetadata(filePath);
-
-      // Set number of observations in data
-      setStataObs(metadata);
-
-      // Add columns
-      Map<String, Type> columns = getColumns(metadata);
-      createColumnsStata(columns);
-
-      // Store data in Stata
-      final Path parquetFilePath = FileSystems.getDefault().getPath(filePath);
-      readFromParquet(parquetFilePath, columns);
-
-      return(0);
-    } catch (Throwable e) {
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
-      e.printStackTrace(pw);
-      String sStackTrace = sw.toString();
-      SFIToolkit.displayln(sStackTrace);
-      return(1);
-    }
-  }
-
-  public static int sayhello(String[] args) {
-    SFIToolkit.displayln("Hello from java!") ;
-    return(0);
-  }
 
   private static void readFromParquet(@Nonnull final Path filePathToRead, Map<String, Type> columns) throws IOException {
     try (final ParquetReader<GenericData.Record> reader = AvroParquetReader
