@@ -1,4 +1,6 @@
 
+
+
 In order to install the Stata JAR onto my system, I ran the following, where
 `-Dfile=sfi-api.jar` should be replaced with the path to the `sfi-api.jar` of
 your Stata installation.
@@ -23,3 +25,17 @@ your Stata installation.
 [INFO] Final Memory: 8M/481M
 [INFO] ------------------------------------------------------------------------
 ```
+
+
+Need to use "Shaded" jar for things to work correctly. This is the jar in which hadoop confs have been merged.
+
+
+### Source documentation
+
+Apache Avro API docs are here: https://avro.apache.org/docs/1.8.2/api/java/org/apache/avro/package-summary.html
+
+`parquet-avro` API docs are here: https://www.javadoc.io/doc/org.apache.parquet/parquet-avro/1.10.0
+
+`parquet-column` API docs are here: https://www.javadoc.io/doc/org.apache.parquet/parquet-column/1.10.0
+
+Stata API docs are here: https://www.stata.com/java/
