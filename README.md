@@ -2,7 +2,7 @@
 
 A prototype Java implementation of reading Parquet files into Stata.
 
-There is currently very basic read support. To build, install Java 8, Maven, and Git and run:
+There is currently very basic read support. Once the program is stable, I'll distribute a file that requires no installation. Until then, you'll need to build the program yourself. To build, install Java 8, Maven, and Git and run:
 
 ```
 git clone https://github.com/kylebarron/stataParquet
