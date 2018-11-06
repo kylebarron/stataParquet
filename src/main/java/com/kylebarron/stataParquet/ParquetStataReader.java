@@ -204,7 +204,7 @@ public class ParquetStataReader {
           break;
         }
         case INT: {
-          long value = (long) record.get(colNum);
+          int value = (int) record.get(colNum);
           double d = (double) value;
           Data.storeNum(colNum + 1, rowNum, d);
           break;
