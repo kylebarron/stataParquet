@@ -3,40 +3,29 @@ package com.kylebarron.stataParquet;
 import com.stata.sfi.SFIToolkit;
 import com.stata.sfi.Data;
 
-
-// import org.apache.avro.generic.GenericData;
-// import org.apache.hadoop.conf.Configuration;
-// import org.apache.parquet.avro.AvroParquetReader;
-// import org.apache.parquet.hadoop.ParquetReader;
-
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.function.Predicate;
 
 import static com.kylebarron.stataParquet.io.InputFile.nioPathToInputFile;
 
-
 import org.apache.hadoop.conf.Configuration;
+import org.apache.avro.generic.GenericData;
+import org.apache.parquet.avro.AvroParquetReader;
+import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.hadoop.ParquetFileReader;
 import org.apache.parquet.hadoop.metadata.BlockMetaData;
 import org.apache.parquet.hadoop.metadata.ParquetMetadata;
 import org.apache.parquet.format.converter.ParquetMetadataConverter;
 
-import org.apache.parquet.column.ColumnDescriptor;
-
 import org.apache.parquet.schema.Type;
 import org.apache.parquet.schema.Types;
 import org.apache.parquet.schema.MessageType;
 
-import org.apache.parquet.example.data.simple.IntegerValue;
-
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 /**
  * Read Parquet file into Stata
@@ -103,7 +92,8 @@ public class ParquetStataReader {
 
   public static int read(String[] args) {
     try {
-      ParquetMetadata metadata = getMetadata("sample.parquet");
+      String filePath = "sample2.parquet";
+      ParquetMetadata metadata = getMetadata(filePath);
 
       // Set number of observations in data
       setStataObs(metadata);
@@ -112,6 +102,9 @@ public class ParquetStataReader {
       Map<String, Type> columns = getColumns(metadata);
       createColumnsStata(columns);
 
+      // Store data in Stata
+      final Path parquetFilePath = FileSystems.getDefault().getPath(filePath);
+      readFromParquet(parquetFilePath, columns);
 
       return(0);
     } catch (Throwable e) {
@@ -125,5 +118,32 @@ public class ParquetStataReader {
     return(0);
   }
 
+  private static void readFromParquet(@Nonnull final Path filePathToRead, Map<String, Type> columns) throws IOException {
+    try (final ParquetReader<GenericData.Record> reader = AvroParquetReader
+            .<GenericData.Record>builder(nioPathToInputFile(filePathToRead))
+            .withConf(new Configuration())
+            .build())
+    {
 
+      SFIToolkit.displayln("Inside readFromParquet!");
+      GenericData.Record record;
+
+      long rowNum = 0;
+      while ((record = reader.read()) != null) {
+        rowNum += 1;
+
+        int colNum = 0;
+        for (Map.Entry<String, Type> entry : columns.entrySet()) {
+          colNum += 1;
+
+          String name = entry.getKey();
+          Type type = entry.getValue();
+
+          long value = (Long) record.get(name);
+          double d = (double) value;
+          Data.storeNum(colNum, rowNum, d);
+        }
+      }
+    }
+  }
 }
