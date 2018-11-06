@@ -43,9 +43,9 @@ import java.util.Map.Entry;
  *
  * @author Kyle Barron
  * @version 0.0.0
- * javacall com.kylebarron.stataParquet.ParquetReader read, jar(stataParquetShaded.jar)
+ * javacall com.kylebarron.stataParquet.ParquetStataReader read, jar(stataParquetShaded.jar)
  */
-public class ParquetReader {
+public class ParquetStataReader {
 
   private static ParquetMetadata getMetadata(String pathString) {
     try {
