@@ -39,7 +39,7 @@ public class ParquetStataReader {
 
   public static int read(String[] args) {
     try {
-      String filePath = "sample.parquet";
+      String filePath = args[0];
       ParquetMetadata metadata = getMetadata(filePath);
 
       // Set number of observations in data
