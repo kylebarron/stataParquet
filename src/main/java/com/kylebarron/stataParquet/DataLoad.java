@@ -1,6 +1,7 @@
 package com.kylebarron.stataParquet;
 
-import com.stata.sfi.*;
+import com.stata.sfi.SFIToolkit;
+import com.stata.sfi.Data;
 
 import org.apache.avro.generic.GenericData;
 import org.apache.hadoop.conf.Configuration;
@@ -45,7 +46,7 @@ public class DataLoad {
   public static int printParquet(String[] args) {
     try {
       SFIToolkit.displayln("Inside printParquet!");
-      final Path parquetFilePath = FileSystems.getDefault().getPath("/Users/kyle/github/java/my_parquet_reader/sample.parquet");
+      final Path parquetFilePath = FileSystems.getDefault().getPath("sample.parquet");
       readFromParquet(parquetFilePath);
       return(0);
     } catch (Throwable e) {
@@ -61,8 +62,20 @@ public class DataLoad {
     {
       SFIToolkit.displayln("Inside readFromParquet!");
       GenericData.Record record;
+      long i = 0;
       while ((record = reader.read()) != null) {
-        SFIToolkit.displayln(record.toString());
+        i += 1;
+        if (i == 1) {
+          Data.setObsTotal(4);
+          Data.addVarLong("a");
+        }
+        int var = 1;
+        SFIToolkit.displayln("Before record");
+        long value = (Long) record.get("a");
+        double d = (double) value;
+        SFIToolkit.displayln("after getting record");
+        Data.storeNum(var, i, d);
+        SFIToolkit.displayln("after storing record");
       }
     }
   }
