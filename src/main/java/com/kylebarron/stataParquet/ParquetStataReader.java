@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import java.io.StringWriter;
+import java.io.PrintWriter;
+
 /**
  * Read Parquet file into Stata
  *
@@ -45,7 +48,11 @@ public class ParquetStataReader {
       path, ParquetMetadataConverter.NO_FILTER);
       return metadata;
     } catch (Throwable e) {
-      SFIToolkit.displayln(e.getStackTrace().toString());
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      String sStackTrace = sw.toString();
+      SFIToolkit.displayln(sStackTrace);
       return null;
     }
   }
@@ -54,7 +61,6 @@ public class ParquetStataReader {
     long num_rows = 0;
     List<BlockMetaData> blocks = metadata.getBlocks();
     for(BlockMetaData b: blocks) {
-      SFIToolkit.displayln("In loop!");
       num_rows += b.getRowCount();
     }
     return num_rows;
@@ -82,7 +88,6 @@ public class ParquetStataReader {
 
       Data.addVarLong(name);
     }
-
   }
 
   private static void setStataObs(ParquetMetadata metadata) {
@@ -108,7 +113,11 @@ public class ParquetStataReader {
 
       return(0);
     } catch (Throwable e) {
-      SFIToolkit.displayln(e.getStackTrace().toString());
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      String sStackTrace = sw.toString();
+      SFIToolkit.displayln(sStackTrace);
       return(1);
     }
   }
