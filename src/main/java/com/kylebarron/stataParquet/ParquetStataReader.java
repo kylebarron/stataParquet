@@ -20,7 +20,7 @@ import org.apache.parquet.hadoop.metadata.ParquetMetadata;
 import org.apache.parquet.format.converter.ParquetMetadataConverter;
 
 import org.apache.parquet.schema.Type;
-import org.apache.parquet.schema.Types;
+import org.apache.parquet.schema.OriginalType;
 import org.apache.parquet.schema.MessageType;
 
 import java.util.List;
@@ -66,27 +66,67 @@ public class ParquetStataReader {
     return num_rows;
   }
 
-  private static Map<String, Type> getColumns(ParquetMetadata metadata) {
+  private static Map<String, OriginalType> getColumns(ParquetMetadata metadata) {
 
-    Map<String, Type> dictionary = new HashMap<String, Type>();
+    Map<String, OriginalType> dictionary = new HashMap<String, OriginalType>();
     MessageType schema = metadata.getFileMetaData().getSchema();
 
     List<Type> fields = schema.getFields();
     for (Type field: fields) {
       String name = field.getName();
       Type type = schema.getType(name);
-      dictionary.put(name, type);
+      SFIToolkit.displayln(type.toString());
+
+      OriginalType originalType = schema.getType(name).getOriginalType();
+      SFIToolkit.displayln("Got original type");
+
+      // SFIToolkit.displayln(originalType.toString());
+      dictionary.put(name, originalType);
     }
     return dictionary;
   }
 
-  private static void createColumnsStata(Map<String, Type> columns) {
-    for (Map.Entry<String, Type> entry : columns.entrySet())
+  private static void createColumnsStata(Map<String, OriginalType> columns) {
+    for (Map.Entry<String, OriginalType> entry : columns.entrySet())
     {
       String name = entry.getKey();
-      Type type = entry.getValue();
+      OriginalType originalType = entry.getValue();
 
-      Data.addVarLong(name);
+      switch (originalType){
+        case UTF8:
+          Data.addVarStr(name, 1);
+          break;
+        case DECIMAL:
+          Data.addVarDouble(name);
+          break;
+        case INT_8:
+          Data.addVarByte(name);
+          break;
+        case INT_16:
+          Data.addVarInt(name);
+          break;
+        case INT_32:
+          Data.addVarLong(name);
+          break;
+        case INT_64:
+          Data.addVarDouble(name);
+          break;
+        case UINT_8:
+          Data.addVarInt(name);
+          break;
+        case UINT_16:
+          Data.addVarLong(name);
+          break;
+        case UINT_32:
+          Data.addVarDouble(name);
+          break;
+        case UINT_64:
+          Data.addVarDouble(name);
+          break;
+        default:
+          // TODO: Fix the default case
+          Data.addVarDouble(name);
+      }
     }
   }
 
@@ -97,19 +137,24 @@ public class ParquetStataReader {
 
   public static int read(String[] args) {
     try {
-      String filePath = "sample2.parquet";
+      String filePath = "sample.parquet";
       ParquetMetadata metadata = getMetadata(filePath);
 
       // Set number of observations in data
       setStataObs(metadata);
+      SFIToolkit.displayln("Finished setting obs!");
 
       // Add columns
-      Map<String, Type> columns = getColumns(metadata);
+      Map<String, OriginalType> columns = getColumns(metadata);
+      SFIToolkit.displayln("Finished retrieving columns!");
+      SFIToolkit.displayln(columns.toString());
       createColumnsStata(columns);
+      SFIToolkit.displayln("Finished adding columns!");
 
       // Store data in Stata
       final Path parquetFilePath = FileSystems.getDefault().getPath(filePath);
       readFromParquet(parquetFilePath, columns);
+      SFIToolkit.displayln("Finished storing data!");
 
       return(0);
     } catch (Throwable e) {
@@ -127,7 +172,7 @@ public class ParquetStataReader {
     return(0);
   }
 
-  private static void readFromParquet(@Nonnull final Path filePathToRead, Map<String, Type> columns) throws IOException {
+  private static void readFromParquet(@Nonnull final Path filePathToRead, Map<String, OriginalType> columns) throws IOException {
     try (final ParquetReader<GenericData.Record> reader = AvroParquetReader
             .<GenericData.Record>builder(nioPathToInputFile(filePathToRead))
             .withConf(new Configuration())
@@ -142,15 +187,76 @@ public class ParquetStataReader {
         rowNum += 1;
 
         int colNum = 0;
-        for (Map.Entry<String, Type> entry : columns.entrySet()) {
+        for (Map.Entry<String, OriginalType> entry : columns.entrySet()) {
           colNum += 1;
 
           String name = entry.getKey();
-          Type type = entry.getValue();
+          OriginalType originalType = entry.getValue();
 
-          long value = (Long) record.get(name);
-          double d = (double) value;
-          Data.storeNum(colNum, rowNum, d);
+          switch (originalType){
+            case UTF8: {
+              String value = record.get(name).toString();
+              Data.storeStr(colNum, rowNum, value);
+              break;
+            }
+            case DECIMAL: {
+              Double value = (Double) record.get(name);
+              Data.storeNum(colNum, rowNum, value);
+              break;
+            }
+            case INT_8: {
+              long value = (Long) record.get(name);
+              double d = (double) value;
+              Data.storeNum(colNum, rowNum, d);
+              break;
+            }
+            case INT_16: {
+              long value = (Long) record.get(name);
+              double d = (double) value;
+              Data.storeNum(colNum, rowNum, d);
+              break;
+            }
+            case INT_32: {
+              long value = (Long) record.get(name);
+              double d = (double) value;
+              Data.storeNum(colNum, rowNum, d);
+              break;
+            }
+            case INT_64: {
+              long value = (Long) record.get(name);
+              double d = (double) value;
+              Data.storeNum(colNum, rowNum, d);
+              break;
+            }
+            case UINT_8: {
+              long value = (Long) record.get(name);
+              double d = (double) value;
+              Data.storeNum(colNum, rowNum, d);
+              break;
+            }
+            case UINT_16: {
+              long value = (Long) record.get(name);
+              double d = (double) value;
+              Data.storeNum(colNum, rowNum, d);
+              break;
+            }
+            case UINT_32: {
+              long value = (Long) record.get(name);
+              double d = (double) value;
+              Data.storeNum(colNum, rowNum, d);
+              break;
+            }
+            case UINT_64: {
+              long value = (Long) record.get(name);
+              double d = (double) value;
+              Data.storeNum(colNum, rowNum, d);
+              break;
+            }
+            default:
+              // TODO: Fix the default case
+              SFIToolkit.displayln("default case");
+          }
+
         }
       }
     }
