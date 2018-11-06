@@ -1,6 +1,8 @@
 package com.kylebarron.stataParquet;
 import java.io.IOException;
 
+import com.stata.sfi.SFIToolkit;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.column.page.PageReadStore;
@@ -30,13 +32,15 @@ public class Main {
       for (int index = 0; index < valueCount; index++) {
         if (fieldType.isPrimitive()) {
           System.out.println(fieldName + " " + g.getValueToString(field, index));
+        SFIToolkit.displayln(fieldName + " " + g.getValueToString(field, index));
+
         }
       }
     }
     System.out.println("");
   }
 
-  public static void main(String[] args) throws IllegalArgumentException {
+  public static int main(String[] args) throws IllegalArgumentException {
 
     Configuration conf = new Configuration();
 
@@ -46,7 +50,8 @@ public class Main {
       ParquetFileReader r = new ParquetFileReader(conf, path, readFooter);
 
 
-      System.out.println(r.toString());
+      // System.out.println(r.toString());
+      System.out.println(schema.toString());
 
       PageReadStore pages = null;
       try {
@@ -70,5 +75,6 @@ public class Main {
       System.out.println("Error reading parquet file.");
       e.printStackTrace();
     }
+    return(0);
   }
 }
