@@ -39,3 +39,9 @@ Apache Avro API docs are here: https://avro.apache.org/docs/1.8.2/api/java/org/a
 `parquet-column` API docs are here: https://www.javadoc.io/doc/org.apache.parquet/parquet-column/1.10.0
 
 Stata API docs are here: https://www.stata.com/java/
+
+To run javadocs, run:
+```
+javadoc -d docs org.apache.parquet -sourcepath src/main/java/
+```
+where the sourcepath is the folder that contains `org/apache/parquet/`.
